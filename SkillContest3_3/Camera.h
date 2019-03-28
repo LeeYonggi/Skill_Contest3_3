@@ -13,7 +13,7 @@ public:
 	Vector3 up;
 
 public:
-	bool isCameraShake;
+	bool isCameraShake = false;
 	float shakeDelay;
 
 public:

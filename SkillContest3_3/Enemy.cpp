@@ -49,14 +49,7 @@ void Enemy::AirEnemyMove()
 	}
 	else
 	{
-		moveVector = player->pos;
-		moveVector.y += 9;
-		moveVector = GetTargetVec3(pos, moveVector);
-
-		velocity += moveVector;
-		velocity.x = max(min(velocity.x, 20), -20);
-		velocity.y = max(min(velocity.y, 3), -3);
-		velocity.z = max(min(velocity.z, 20), -20);
+		EnemyStateMove();
 	}
 	Vector2 temp;
 	temp.x = pos.x;
@@ -116,8 +109,44 @@ bool Enemy::IsInScreen()
 
 void Enemy::AirEnemyAttack()
 {
-	attack.AttackUpdate();
-	attack.attackDelay = 2.0f;
-	Vector3 temp = GetTargetVec3(pos, player->pos);
-	attack.Attack(OBJ_EBULLET, BULLET_ENEMY, pos, temp, 0);
+	if (state == ENEMY_ATTACK)
+	{
+		attack.AttackUpdate();
+		attack.attackDelay = 2.0f;
+		Vector3 temp = GetTargetVec3(pos, player->pos);
+		attack.Attack(OBJ_EBULLET, BULLET_ENEMY, pos, temp, 0);
+	}
+}
+
+void Enemy::EnemyStateMove()
+{
+	switch (state)
+	{
+	case ENEMY_MOVE:
+		moveVector = player->pos;
+		moveVector.y += 9;
+		moveVector = GetTargetVec3(pos, moveVector);
+
+		velocity += moveVector;
+		velocity.x = max(min(velocity.x, 20), -20);
+		velocity.y = max(min(velocity.y, 3), -3);
+		velocity.z = max(min(velocity.z, 20), -20);
+		if (GetCircleCollision(player->pos, pos, player->radius, 20))
+			state = ENEMY_ATTACK;
+		break;
+	case ENEMY_ATTACK:
+		velocity.x = d3d::Lerp(velocity.x, 0.0f, 0.1f);
+		velocity.z = d3d::Lerp(velocity.z, 0.0f, 0.1f);
+
+		moveVector = player->pos;
+		moveVector.y += 9;
+		moveVector = GetTargetVec3(pos, moveVector);
+
+		velocity.y += moveVector.y;
+		if (!GetCircleCollision(player->pos, pos, player->radius, 20))
+			state = ENEMY_MOVE;
+		break;
+	default:
+		break;
+	}
 }

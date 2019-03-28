@@ -48,9 +48,10 @@ void PlayerArm::Update()
 	(this->*playerArmFunc[state])();
 	if (INPUTMANAGER->KeyDown('A'))
 	{
-		if (armRotate == 0)
-			armRotate = 10;
-		else
+		armRotate += 0.5f;
+		if (armRotate >= 1)
+			armRotate += 3;
+		if (armRotate > 4)
 			armRotate = 0;
 	}
 	if (INPUTMANAGER->KeyDown('4') && player->itemCount[ITEM_THIRD])

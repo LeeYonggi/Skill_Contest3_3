@@ -43,7 +43,7 @@ void Player::Init()
 	state = PLAYER_IDLE;
 	moveVector = { 1, 0, 0 };
 	isControl = false;
-	radius = 3.0f;
+	radius = 2.0f;
 
 	shield = MESHMANAGER->AddMesh("speedUpModel", L"./Resource/Effect/speed_up_model/speed_up.obj");
 
